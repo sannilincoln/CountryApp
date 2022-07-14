@@ -13,6 +13,8 @@ const Home = () => {
     const { loading, error, data } = useQuery(APIDATA);
      const [Continent, setContinent] = useState(0);
      const [contName, setContName] = useState('All Countries');
+     const [allCont,setAllCont ] = useState(true);
+     const [contData, setcontData] = useState([]);
      const [masterData, setMasterData] = useState([]);
     const [search, setSearch] = useState('')
    
@@ -23,34 +25,22 @@ const Home = () => {
                     <Text style ={{textAlign:'center'}}>Loading...</Text>
                 </View>
             )
-    }   
-    
-   
-
-    const waiting = () => {
-        return( <View style={{flex:1,justifyContent:'center',alignContent:'center'}}>
-         <ActivityIndicator size="large" color="#00ff00" />
-                 <Text style ={{textAlign:'center'}}>Loading...</Text>
-            </View>)
-            }
-        const err = () =>{
+    } else if (error){
             return( 
                 <View style={{flex:1,justifyContent:'center',alignContent:'center'}}>
                     <Text style ={{textAlign:'center'}}> error: {error}</Text>
                 </View>
-                    )} 
+         )} 
 
-    const allData = [
-        data.countries,
-        data.continents[0].countries, // Africa
-     data.continents[2].countries,      // Asia
-     data.continents[3].countries,      // Europe
-     data.continents[4].countries,      // North America
-     data.continents[6].countries,        // South America
-    ]
+    
+
+    
+      
+              
    
+    
 
- const searhFilter = (text) => {
+ const searchFilter = (text) => {
      if (text) {
          const newData = masterData.filter((item) =>{
              const itemData = item.name ? item.name.toUpperCase() 
@@ -58,49 +48,50 @@ const Home = () => {
             const textData = text.toUpperCase();
             return itemData.indexOf(textData) > -1;
          });
-            // set allData[Continent] = newDAta
-            allData[Continent] = allData[Continent]=[].push(newData)
-            
-            
+          
+            setcontData(newData)
             setSearch(text)
      }else{
-        // setContinent(masterData)
-        // set allData[Continent] = masterData
-        allData[Continent] = allData[Continent]=[].push(masterData)
-
+        
+        setcontData(masterData)
          setSearch(text);
      }
  }
 
  const EuropeFilter = () =>{
-     setContinent(3);
+     setAllCont(false) 
+     setcontData(data.continents[3].countries)
      setContName(data.continents[3].name);
-     setMasterData(allData[3])  
+     setMasterData(data.continents[3].countries) 
  }
  const AfricaFilter = () =>{
-    setContinent(1)
+    setAllCont(false) 
+    setcontData(data.continents[0].countries)
      setContName(data.continents[0].name);
-    setMasterData(allData[1])
+    setMasterData(data.continents[0].countries)
 
  }
  const AsiaFilter = () =>{
-     setContinent(2)
+    setAllCont(false) 
+    setcontData(data.continents[2].countries)
      setContName(data.continents[2].name);
-    setMasterData([2])
+    setMasterData(data.continents[2].countries)
 
 
  }
  const NorthAmericaFilter = () =>{
-     setContinent(4)
+    setAllCont(false) 
+    setcontData(data.continents[4].countries)
      setContName(data.continents[4].name);
-    setMasterData([4])
+    setMasterData(data.continents[4].countries)
 
 
  }
  const SouthAmericaFilter = () =>{
-     setContinent(5)
+    setAllCont(false) 
+    setcontData(data.continents[6].countries)
      setContName(data.continents[6].name);
-    setMasterData([5])
+    setMasterData(data.continents[6].countries)
 
 
  }
@@ -116,7 +107,7 @@ const Home = () => {
            <TextInput
            placeholder='Search Countries'
            value ={search}
-           onChangeText={(text)=> searhFilter(text)}
+           onChangeText={(text)=> searchFilter(text)}
            />
         </View>
         <View style={{flexDirection:'row',justifyContent:'space-evenly'}}>
@@ -172,7 +163,7 @@ const Home = () => {
         </View>
 
         <ScrollView>
-        { allData[Continent].map(({name,phone,currency,emoji})=>{
+        { allCont ? data.countries.map(({name,phone,currency,emoji})=>{
             return(                       
                 <View style={styles.content}
                 key={emoji}
@@ -185,7 +176,22 @@ const Home = () => {
                     
                 </View>                    
             )
-        })}
+        })
+        : contData.map(({name,phone,currency,emoji})=>{
+            return(                       
+                <View style={styles.content}
+                key={emoji}
+                >                
+                   <View style={styles.dataField}>
+                        <Text   style={{fontWeight:'700'}}>Name: {name}</Text>
+                        <Text>Currency: {currency}</Text>
+                        <Text>Flag: {emoji}</Text>
+                    </View>
+                    
+                </View>                    
+            )
+        })
+        }
 
 
         </ScrollView>
@@ -284,90 +290,3 @@ const styles = StyleSheet.create({
 })
 export default Home
 
-
-
-
-
-{/* <FlatList 
-          data={missions}
-          renderItem={(({item})  =>{
-          return(
-                <>
-                <View style={styles.content}>
-                        
-                        <View style={styles.dataField}>
-                            <Text   style={{fontWeight:'700'}}> {item.name}</Text>
-                            <Text
-                            numberOfLines={3}
-                            >{item.description}</Text>
-                            </View>
-                </View>                 
-                </>
-            )
-          })}
-          keyExtractor={item => item.id}
-        /> */}
-
-         // setCapsules(data.capsules);
-    // setMissions(data.issions);
-    // setShips(data.ships);
-    // setRockets(data.rockets);
-    // setHistoriesResult(data.);
-
-
-    // { 
-        //     return(
-        //         <View style={{flex:1,justifyContent:'center',alignContent:'center'}}>
-        //         <ActivityIndicator size="large" color="#00ff00" />
-        //             <Text style ={{textAlign:'center'}}>Loading...</Text>
-        //         </View>
-        //     )
-        //     } else if (error){
-        //         return( 
-        //             <View style={{flex:1,justifyContent:'center',alignContent:'center'}}>
-        //                 <Text style ={{textAlign:'center'}}> error: {error}</Text>
-        //             </View>
-        //         )
-        //     } else
-
-            //  const [Europe, setEurope] = useState(data.continents[3].countries);
-    //  const [Asia, setAsia] = useState(data.continents[2].countries);
-    //  const [Africa, setAfrica] = useState(data.continents[0].countries);
-    //  const [NorthAmerica, setNorthAmerica] = useState(data.continents[4].countries);
-    //  const [SouthAmerica, setSouthAmerica] = useState(data.continents[6].countries);
-    //  const [Continent, setContinent] = useState(Europe);
-    //  const [contName, setContName] = useState(data.continents[3].name);
-
-    //  const [masterData, setMasterData] = useState(Continent);
-    // const [search, setSearch] = useState('')   
-
-     // const Africa = data.continents[0].countries;
-    // const Asia = data.continents[2].countries;
-    // const NorthAmerica = data.continents[4].countries;
-    // const Oceania = data.continents[5].countries;
-    // const SouthAmerica = data.continents[6].countries;
-
-    // if (error) return <Text>Error... </Text>;
-
-
-     // useEffect(()=> {
-    //     if (data){
-    //         const  all = data.countries
-    //          incomingData(all)
-    //     }else if (error){
-    //         err();
-            
-    //     }},[data]) 
-    
-    // const incomingData = (all) => {
-    //                 setCountries(all)
-    //     setAfrica(data.continents[0].countries);
-    //     setAsia(data.continents[2].countries);
-    //     setEurope(data.continents[3].countries);
-    //     setNorthAmerica(data.continents[4].countries);
-    //     setSouthAmerica(data.continents[6].countries);
-    //     setMasterData(Continent);
-    // }
-   
-
-    // console.log(data.countries);
